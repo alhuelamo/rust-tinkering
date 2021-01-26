@@ -1,3 +1,5 @@
+mod mtx_rotate;
+
 fn quicksort<T>(mut items: Vec<T>) -> Vec<T>
     where T: PartialOrd
 {
