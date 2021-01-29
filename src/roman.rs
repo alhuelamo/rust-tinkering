@@ -7,11 +7,15 @@ type Result<T> = std::result::Result<T, RomanError>;
 
 #[derive(Debug, Eq, PartialEq)]
 enum RomanError {
+    EncodeZero,
     DecodeIllegalCharacter(char),
     DecodeIllegalPosition { illegal: char, next: char },
 }
 
 fn encode(input: u16) -> Result<String> {
+    if input == 0 {
+        return Err(RomanError::EncodeZero);
+    }
     let factors = tenth_factors(input);
     Ok("(())".to_string())
 }
@@ -94,6 +98,13 @@ mod test {
     }
 
     #[test]
+    fn test_roman_encode_error_zero_input() {
+        let actual = encode(0);
+        let expected = Err(RomanError::EncodeZero);
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
     fn test_roman_decode_basics() -> Result<()> {
         assert_eq!(decode("I")?, 1);
         assert_eq!(decode("V")?, 5);
@@ -126,7 +137,8 @@ mod test {
     #[test]
     fn test_roman_decode_error_invalid_legal_character_in_illegal_position() {
         let actual = decode("IM");
-        assert_eq!(actual, Err(RomanError::DecodeIllegalPosition { illegal: 'I', next: 'M' }));
+        let expected = Err(RomanError::DecodeIllegalPosition { illegal: 'I', next: 'M' });
+        assert_eq!(actual, expected);
     }
-    
+
 }
