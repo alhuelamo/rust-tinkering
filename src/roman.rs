@@ -1,6 +1,7 @@
 #![allow(non_snake_case)]
 
 use std::collections::HashMap;
+use std::collections::HashSet;
 
 type Result<T> = std::result::Result<T, RomanError>;
 
@@ -8,6 +9,10 @@ type Result<T> = std::result::Result<T, RomanError>;
 enum RomanError {
     DecodeIllegalCharacter(char),
     DecodeIllegalPosition { illegal: char, next: char },
+}
+
+fn encode(input: u16) -> Result<String> {
+    Ok("(())".to_string())
 }
 
 fn decode(input: &str) -> Result<u16> {
@@ -48,6 +53,30 @@ fn decode_lookup_table() -> HashMap<char, u16> {
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
+    fn test_roman_encode_basics() -> Result<()> {
+        assert_eq!(encode(1)?, "I");
+        assert_eq!(encode(5)?, "V");
+        assert_eq!(encode(10)?, "X");
+        assert_eq!(encode(50)?, "L");
+        assert_eq!(encode(100)?, "C");
+        assert_eq!(encode(500)?, "D");
+        assert_eq!(encode(1000)?, "M");
+        Ok(())
+    }
+
+    #[test]
+    fn test_roman_encode_3457() {
+        let actual = encode(3457);
+        assert_eq!(actual, Ok("MMMCDLVII"))
+    }
+
+    #[test]
+    fn test_roman_encode_3999() {
+        let actual = encode(3457);
+        assert_eq!(actual, Ok("MMMCMXCIX"))
+    }
 
     #[test]
     fn test_roman_decode_basics() -> Result<()> {
