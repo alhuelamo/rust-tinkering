@@ -12,7 +12,17 @@ enum RomanError {
 }
 
 fn encode(input: u16) -> Result<String> {
+    let factors = tenth_factors(input);
     Ok("(())".to_string())
+}
+
+fn tenth_factors(mut n: u16) -> Vec<u16> {
+    let mut ret = Vec::new();
+    while n > 0 {
+        ret.push(n % 10);
+        n = n / 10;
+    }
+    ret
 }
 
 fn decode(input: &str) -> Result<u16> {
@@ -55,6 +65,11 @@ mod test {
     use super::*;
 
     #[test]
+    fn test_factorization() {
+        assert_eq!(tenth_factors(1234), vec![4, 3, 2, 1]);
+    }
+
+    #[test]
     fn test_roman_encode_basics() -> Result<()> {
         assert_eq!(encode(1)?, "I");
         assert_eq!(encode(5)?, "V");
@@ -69,13 +84,13 @@ mod test {
     #[test]
     fn test_roman_encode_3457() {
         let actual = encode(3457);
-        assert_eq!(actual, Ok("MMMCDLVII"))
+        assert_eq!(actual, Ok("MMMCDLVII".to_string()))
     }
 
     #[test]
     fn test_roman_encode_3999() {
         let actual = encode(3457);
-        assert_eq!(actual, Ok("MMMCMXCIX"))
+        assert_eq!(actual, Ok("MMMCMXCIX".to_string()))
     }
 
     #[test]
