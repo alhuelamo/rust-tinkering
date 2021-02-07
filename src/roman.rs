@@ -119,13 +119,19 @@ mod test {
     #[test]
     fn test_roman_encode_3457() {
         let actual = encode(3457);
-        assert_eq!(actual, Ok("MMMCDLVII".to_string()))
+        assert_eq!(actual, Ok("MMMCDLVII".to_string()));
     }
 
     #[test]
     fn test_roman_encode_3999() {
         let actual = encode(3999);
-        assert_eq!(actual, Ok("MMMCMXCIX".to_string()))
+        assert_eq!(actual, Ok("MMMCMXCIX".to_string()));
+    }
+
+    #[test]
+    fn test_roman_encode_1002() {
+        let actual = encode(1002);
+        assert_eq!(actual, Ok("MII".to_string()));
     }
 
     #[test]
