@@ -1,3 +1,5 @@
+#[macro_use] extern crate maplit;
+
 mod mtx_rotate;
 mod roman;
 

@@ -1,23 +1,49 @@
 #![allow(non_snake_case)]
 
 use std::collections::HashMap;
-use std::collections::HashSet;
 
 type Result<T> = std::result::Result<T, RomanError>;
 
 #[derive(Debug, Eq, PartialEq)]
 enum RomanError {
     EncodeZero,
+    EncodeIllegalExponent(usize),
+    EncodeIllegalLookupIndex(usize),
     DecodeIllegalCharacter(char),
     DecodeIllegalPosition { illegal: char, next: char },
 }
+
+const VOID_STR: &str = "-";
 
 fn encode(input: u16) -> Result<String> {
     if input == 0 {
         return Err(RomanError::EncodeZero);
     }
+    let table = encode_lookup_table();
     let factors = tenth_factors(input);
-    Ok("(())".to_string())
+    let mut ret = String::new();
+
+    for (exp, factor) in factors.iter().enumerate() {
+        let exp = exp as usize;
+        let exp_row = table.get(exp)
+            .ok_or(RomanError::EncodeIllegalExponent(exp))?;
+        let encoded_factor = exp_row.get(*factor as usize)
+            .ok_or(RomanError::EncodeIllegalLookupIndex(*factor as usize))?;
+        if *encoded_factor != VOID_STR {
+            ret = String::from(*encoded_factor) + &ret;
+        }
+    }
+
+    Ok(ret)
+}
+
+fn encode_lookup_table() -> Vec<Vec<&'static str>> {
+    vec![
+        vec![VOID_STR, "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"],
+        vec![VOID_STR, "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"],
+        vec![VOID_STR, "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"],
+        vec![VOID_STR, "M", "MM", "MMM"],
+    ]
 }
 
 fn tenth_factors(mut n: u16) -> Vec<u16> {
@@ -53,15 +79,15 @@ fn decode(input: &str) -> Result<u16> {
 }
 
 fn decode_lookup_table() -> HashMap<char, u16> {
-    let mut ret = HashMap::new();
-    ret.insert('I', 1);
-    ret.insert('V', 5);
-    ret.insert('X', 10);
-    ret.insert('L', 50);
-    ret.insert('C', 100);
-    ret.insert('D', 500);
-    ret.insert('M', 1000);
-    ret
+    hashmap!{
+        'I' => 1,
+        'V' => 5,
+        'X' => 10,
+        'L' => 50,
+        'C' => 100,
+        'D' => 500,
+        'M' => 1000,
+    }
 }
 
 #[cfg(test)]
@@ -71,6 +97,11 @@ mod test {
     #[test]
     fn test_factorization() {
         assert_eq!(tenth_factors(1234), vec![4, 3, 2, 1]);
+    }
+
+    #[test]
+    fn test_roman_encode_zero() {
+        assert_eq!(encode(0), Err(RomanError::EncodeZero));
     }
 
     #[test]
@@ -93,7 +124,7 @@ mod test {
 
     #[test]
     fn test_roman_encode_3999() {
-        let actual = encode(3457);
+        let actual = encode(3999);
         assert_eq!(actual, Ok("MMMCMXCIX".to_string()))
     }
 
