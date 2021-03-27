@@ -2,6 +2,7 @@
 
 mod mtx_rotate;
 mod roman;
+mod collections;
 
 fn quicksort<T>(mut items: Vec<T>) -> Vec<T>
     where T: PartialOrd
