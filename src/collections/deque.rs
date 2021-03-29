@@ -2,7 +2,7 @@ use std::fmt;
 use std::rc::Rc;
 
 use crate::collections::linked_list::LinkedList;
-struct Deque<T: fmt::Display> {
+pub struct Deque<T: fmt::Display> {
     elements: Option<LinkedList<Rc<T>>>,
     first: Option<Rc<T>>,
     last: Option<Rc<T>>,
