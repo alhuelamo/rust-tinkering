@@ -47,6 +47,21 @@ impl<T: fmt::Display> LinkedList<T> {
         }
     }
 
+    pub fn len(&self) -> usize {
+        match self {
+            LinkedList::Nil => 0,
+            LinkedList::Tail { .. } => 1,
+            LinkedList::Link { tail, .. } => 1 + tail.len(),
+        }
+    }
+
+    pub fn is_empty(&self) -> bool {
+        match self {
+            LinkedList::Nil => true,
+            LinkedList::Tail { .. } | LinkedList::Link { .. } => false,
+        }
+    }
+
     fn to_string(&self) -> String {
         format!("List({})", self.str_loop("".to_string()))
     }
@@ -137,5 +152,41 @@ mod test_linked_list {
     fn test_peek_overflow() {
         let list = LinkedList::new(9).append(42);
         assert_eq!(list.peek(2), Err("Index overflow."))
+    }
+
+    #[test]
+    fn test_len_nil() {
+        let list = LinkedList::<usize>::Nil;
+        assert_eq!(list.len(), 0);
+    }
+
+    #[test]
+    fn test_len_tail() {
+        let list = LinkedList::new(9 as usize);
+        assert_eq!(list.len(), 1);
+    }
+    
+    #[test]
+    fn test_len() {
+        let list = LinkedList::new(9 as usize).append(42);
+        assert_eq!(list.len(), 2);
+    }
+
+    #[test]
+    fn test_is_empty_nil() {
+        let list = LinkedList::<usize>::Nil;
+        assert_eq!(list.is_empty(), true);
+    }
+
+    #[test]
+    fn test_is_empty_tail() {
+        let list = LinkedList::new(9 as usize);
+        assert_eq!(list.is_empty(), false);
+    }
+
+    #[test]
+    fn test_is_empty() {
+        let list = LinkedList::new(9 as usize).append(42);
+        assert_eq!(list.is_empty(), false);
     }
 }
